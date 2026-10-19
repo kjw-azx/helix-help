@@ -1,0 +1,24 @@
+# Deploys this app to Helix as a preview on every push to main.
+# Written by `helix ci init`. The repo needs no secret: the deploy job
+# authenticates with its own GitHub OIDC token. The build job runs the repo's
+# code without that permission. A preview goes live only when someone promotes
+# it, in the portal or with `helix promote <n>`.
+name: Deploy to Helix
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+# Each job asks for only what it needs.
+permissions: {}
+
+jobs:
+  deploy:
+    uses: AZX-PBC-OSS/helix-actions/.github/workflows/deploy.yml@v1
+    permissions:
+      contents: read
+      id-token: write
+    with:
+      package-manager: npm
+      working-directory: "."
+      build-script: "build"
+      cli-version: "0.5.0"
